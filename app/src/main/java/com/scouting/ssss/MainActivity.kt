@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.i(tag, "Setting up database")
         database.setup(bluetooth)
-        database.dataSent(bluetooth.pendingData)
+        //database.dataSent(bluetooth.pendingData)
     }
 
     override fun onStart() {

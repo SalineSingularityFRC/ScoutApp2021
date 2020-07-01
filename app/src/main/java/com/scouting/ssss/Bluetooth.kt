@@ -17,6 +17,7 @@ public class BluetoothClass(a: MainActivity?) {
     private val tag = "7G7 Bluetooth"
     private var setup = false
     var pendingData: String = ""
+    var partialMessage = ""
     // TODO: Handler is deprecated, what's an alternative?
     private val handler = Handler()
     private val bluetooth: Bluetooth
@@ -47,9 +48,22 @@ public class BluetoothClass(a: MainActivity?) {
         }
 
         override fun onMessage(message: String) {
-            pendingData = ""
+            Log.i(tag, "Got a message: '$message'")
+            // TODO: This is a hack
+            // if the file is too long, the pi sends the data in chunks which leads to corrupted JSON.
+            // we add each message to pendingData until we find the end is a ], which *should* always mean the end of a message
+            // there are probably edge cases though, so this should get fixed
+//            partialMessage += message
+//
+//            if (message[message.length - 1] == ']') {
+//                Log.i(tag, "Sending message '$partialMessage'")
+//                activity?.database?.dataSent(partialMessage)
+//                Log.i(tag, "Data transfer complete!")
+//                partialMessage = ""
+//            }
+            Log.i(tag, "Sending message '$message'")
             activity?.database?.dataSent(message)
-            Log.i(tag, "Data transfer complete!")
+            Log.i(tag, "Data transfer complete")
         }
 
         override fun onError(message: String) {
