@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import java.nio.charset.Charset
 
 
 // The beginning screen
@@ -12,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     private val tag = "7G7 Bluetooth"
     private var bluetooth: BluetoothClass? = null
     private var started = false
+    private var database: Database? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,19 +26,33 @@ class MainActivity : AppCompatActivity() {
         newMatch.setOnClickListener {
             Log.i(tag, "Clicked new match button")
         }
+
+        Log.i(tag, "Setting up bluetooth")
+        this.startBluetooth()
+        if (!started) {
+            bluetooth?.send("{\"teamData\":[],\"matchData\":[]}".toByteArray(Charset.forName("UTF-8")))
+            started = true
+        }
+
+        Log.i(tag, "Setting up database")
+        // TODO: Handle this better
+        if (bluetooth == null) {
+            Log.e(tag, "BLUETOOTH IS NULL, this is probably a bug")
+            startBluetooth()
+        }
+        database = Database(bluetooth!!)
     }
 
     override fun onStart() {
         super.onStart()
         Log.i(tag, "Started main activity")
 
-        // bluetooth.setup
-        if (!started) {
-            bluetooth = BluetoothClass()
-            // Send empty data to test the connection
-            bluetooth?.send("{\"teamData\":[],\"matchData\":[]}".toByteArray())
-            started = true
-        }
+        if (bluetooth == null) startBluetooth()
+    }
+
+    private fun startBluetooth() {
+        Log.i(tag, "Creating bluetooth instance")
+        this.bluetooth = BluetoothClass(this)
     }
 
     override fun onDestroy() {
