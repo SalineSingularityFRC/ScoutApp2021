@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
     private val tag = "7G7 Bluetooth"
     private var bluetooth: BluetoothClass? = null
     private var started = false
-    private var database: Database? = null
+    var database: Database? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             startBluetooth()
         }
         database = Database(bluetooth!!)
+        database?.dataSent(bluetooth!!.currentData)
     }
 
     override fun onStart() {

@@ -7,6 +7,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.lang.Exception
 
 public class Database(bt: BluetoothClass) {
@@ -81,6 +82,24 @@ public class Database(bt: BluetoothClass) {
         val data = "{\"matchData\":${robotMatchData.toString()},\"teamData\":${tempTeamData.toString()}}"
         bluetooth.send(data)
         Log.i(tag, "Sent data: $data")
+    }
+
+    fun dataSent(data: String) {
+        try {
+            teamData = JSONArray(data)
+            val fos = bluetooth.activity.openFileOutput("teamData.json", Context.MODE_PRIVATE).bufferedWriter().use {
+                it.write(teamData.toString())
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return
+        } catch (e: JSONException) {
+            e.printStackTrace()
+            return
+        }
+
+        robotMatchData = JSONArray()
+        tempTeamData = JSONArray()
     }
 
     fun createRobotMatch(teamNumber: Int, match: String) {
