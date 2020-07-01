@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     // Logging tag
     private val tag = "7G7 Bluetooth"
+    private var bluetooth: BluetoothClass? = null
     private var started = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         // bluetooth.setup
         if (!started) {
-            // bluetooth.send("")
+            bluetooth = BluetoothClass()
+            // Send empty data to test the connection
+            bluetooth?.send("{\"teamData\":[],\"matchData\":[]}".toByteArray())
             started = true
         }
     }

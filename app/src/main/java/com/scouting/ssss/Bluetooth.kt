@@ -15,16 +15,17 @@ import java.util.*
 // If we ever want to get fancy, we can use error codes like this to handle errors
 const val MESSAGE_ERR = 1
 
-public class BluetoothClass(private val handler: Handler) {
+public class BluetoothClass() {
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private val tag = "7G7 Bluetooth"
     private var setup = false
+    private val handler = BtHandler(WeakReference(this))
     // TODO: This could probably be made non-optional with some magic
     private var bluetooth: ConnectThread? = null
     // TODO: How do we avoid hardcoding the MAC addr?
     private val macAddr: String = "B8:27:EB:E8:64:53" //Put the bluetooth address of you Pi server here
 
-    public fun matchFromPaired(): BluetoothDevice? {
+    private fun matchFromPaired(): BluetoothDevice? {
         val paired: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
         paired?.forEach {
             // Match the address of each paired device against our target MAC address
@@ -38,16 +39,25 @@ public class BluetoothClass(private val handler: Handler) {
 
     // initialize the bluetooth connection
      init {
-        if (!setup) {
+        // Hang until a connection succeeds
+        // right now this just makes a blank screen which isn't ideal
+        // TODO: impl a loading screen?
+        while (!setup) {
             val dev = matchFromPaired()
             // TODO: Handle this better
             if (dev == null) {
                 Log.i(tag, "Couldn't find target device!")
+                setup = false
+            } else {
+                bluetooth = ConnectThread(dev)
+                bluetooth?.run()
+                setup = true
             }
-            bluetooth = ConnectThread(dev!!)
-            bluetooth?.run()
         }
-        setup = true
+    }
+
+    fun send(data: ByteArray) {
+        bluetooth?.run(data)
     }
 
     // Thread for connecting to a device
