@@ -7,6 +7,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.FileInputStream
 import java.io.FileNotFoundException
+import java.lang.Exception
 
 public class Database(bt: BluetoothClass) {
     private val bluetooth: BluetoothClass = bt
@@ -24,30 +25,33 @@ public class Database(bt: BluetoothClass) {
         this.tempRobotMatchData = JSONObject()
 
         //var jsonObjectArray = ArrayList<>
-        var currentJSONString = ""
+        //var currentJSONString = ""
 
         // Attempt to read from the current teamData.json
         try {
-            val (dat, fis) = readFile("teamData.json")
-            Log.i(tag, String.format("Dat: %d :: Str: %s", dat, fis.toString()))
-            teamData = JSONArray(fis.toString())
+            val dat = readFile("teamData.json")
+            Log.i(tag, "Data: $dat")
+            teamData = JSONArray(dat)
+        } catch (e: Exception) {
+            when (e) {
+                is FileNotFoundException, is JSONException -> {
+                    Log.e(tag, "File not found! Trying again")
+                    try {
+                        // This bit creates a brand new file if one doesn't exist already
+                        bluetooth.activity.openFileOutput("teamData.json", Context.MODE_PRIVATE).use {
+                            // NOTE: This may be unsafe. If there's a different JSON err for some reason, everything gets destroyed
+                            // The question is whether there can be a JSON err for any reason other than "the file is empty"
+                            it.write("[{}]".toByteArray())
+                        }
 
-            fis.close()
-        } catch (e: FileNotFoundException) {
-            Log.e(tag, "File not found! Trying again")
-            try {
-                // This bit creates a brand new file if one doesn't exist already
-                val fos = bluetooth.activity.openFileOutput("teamData.json", Context.MODE_PRIVATE)
-                fos.write("".toByteArray())
-                fos.close()
-
-                // retry
-                val (dat, fis) = readFile("teamData.json")
-                Log.i(tag, String.format("Dat: %d :: Str: %s", dat, fis.toString()))
-                teamData = JSONArray(fis.toString())
-                fis.close()
-            } catch (e1: JSONException) {
-                e1.printStackTrace()
+                        // retry
+                        val dat = readFile("teamData.json")
+                        Log.i(tag, "Data: $dat")
+                        teamData = JSONArray(dat)
+                    } catch (e1: JSONException) {
+                        e1.printStackTrace()
+                    }
+                }
             }
             //e.printStackTrace()
         } catch (e: JSONException) {
@@ -58,10 +62,10 @@ public class Database(bt: BluetoothClass) {
 
     // Read a file and return its input stream
     // NOTE: YOU MUST CALL .close() ON THE RETURNED STREAM
-    private fun readFile(name: String): Pair<Int, FileInputStream> {
-        val fis = bluetooth.activity.openFileInput(name)
-        val dat = fis.read()
-        return Pair(dat, fis)
+    private fun readFile(name: String): String {
+        return bluetooth.activity.openFileInput(name).bufferedReader().use {
+            it.readText()
+        }
     }
 
     fun makeTeam(teamNumber: Int, teamName: String) {
@@ -74,7 +78,7 @@ public class Database(bt: BluetoothClass) {
     }
 
     private fun send() {
-        val data = "{\"matchData\":${robotMatchData.toString()},\"teamData\":${tempTeamData.toString()}}".toByteArray()
+        val data = "{\"matchData\":${robotMatchData.toString()},\"teamData\":${tempTeamData.toString()}}"
         bluetooth.send(data)
         Log.i(tag, "Sent data: $data")
     }

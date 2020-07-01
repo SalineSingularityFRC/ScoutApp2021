@@ -30,7 +30,9 @@ class MainActivity : AppCompatActivity() {
         Log.i(tag, "Setting up bluetooth")
         this.startBluetooth()
         if (!started) {
-            bluetooth?.send("{\"teamData\":[],\"matchData\":[]}".toByteArray(Charset.forName("UTF-8")))
+            val data = "{\"teamData\":[],\"matchData\":[]}"
+            Log.i(tag, "Sending data '$data'")
+            bluetooth?.send(data)
             started = true
         }
 

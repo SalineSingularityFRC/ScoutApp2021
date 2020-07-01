@@ -15,11 +15,12 @@ import java.util.*
 // If we ever want to get fancy, we can use error codes like this to handle errors with the handler
 const val MESSAGE_ERR = 1
 
-public class BluetoothClass {
-    val activity: MainActivity
+public class BluetoothClass(a: MainActivity) {
+    val activity: MainActivity = a
     private val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private val tag = "7G7 Bluetooth"
     private var setup = false
+    // TODO: Handler is deprecated, what's an alternative?
     private val handler = Handler()
     // TODO: This could probably be made non-optional with some magic
     private var bluetooth: ConnectThread? = null
@@ -38,13 +39,7 @@ public class BluetoothClass {
         return null
     }
 
-    // initialize the bluetooth connection
-    constructor(a: MainActivity) {
-        activity = a
-
-        // Hang until a connection succeeds
-        // right now this just makes a blank screen which isn't ideal
-        // TODO: impl a loading screen?
+    init {
         while (!setup) {
             val dev = matchFromPaired()
             // TODO: Handle this better
@@ -60,7 +55,7 @@ public class BluetoothClass {
         }
     }
 
-    fun send(data: ByteArray) {
+    fun send(data: String) {
         bluetooth?.run(data)
     }
 
@@ -80,8 +75,7 @@ public class BluetoothClass {
                 getStream(device)
             }
 
-
-            mmSocket.let { socket ->
+            mmSocket.use { socket ->
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
 
@@ -95,12 +89,10 @@ public class BluetoothClass {
                 // The connection attempt succeeded. Perform work associated with
                 // the connection in a separate thread.
             }
-
-            mmSocket.close()
         }
 
         // The same as this.run(), but sends a ByteArray over the socket
-        public fun run(data: ByteArray) {
+        public fun run(data: String) {
             // Turn off discovery to speed connection
             bluetoothAdapter?.cancelDiscovery()
 
@@ -110,7 +102,8 @@ public class BluetoothClass {
                 getStream(device)
             }
 
-            mmSocket.let { socket ->
+            // 'use' automatically closes the session at the end of scope
+            mmSocket.use { socket ->
                 try {
                     socket.connect()
                     //var stream = fallbackSocket.outputStream
@@ -122,30 +115,31 @@ public class BluetoothClass {
                     Log.e(tag, "Null output stream; won't write data")
                 }  else {
                     // Connection succeeded; write our data
-                    socket.outputStream.write(data)
+                    Log.i(tag, "Writing '$data' over the connection")
+                    socket.outputStream.bufferedWriter().use {
+                        it.write(data)
+                    }
                 }
             }
-
-            mmSocket.close()
         }
 
         // Write data to the bluetooth socket to send data to a remote device
-        public fun write(stream: OutputStream, bytes: ByteArray) {
-            try {
-                stream.write(bytes)
-            } catch (e: IOException) {
-                Log.e(tag, "Error occurred when sending data", e)
-
-                // Send a failure message back to the activity.
-                val writeErrorMsg = handler.obtainMessage(MESSAGE_ERR)
-                val bundle = Bundle().apply {
-                    putString(tag, "Couldn't send data to the other device")
-                }
-                writeErrorMsg.data = bundle
-                handler.sendMessage(writeErrorMsg)
-                return
-            }
-        }
+//        public fun write(stream: OutputStream, bytes: ByteArray) {
+//            try {
+//                stream.write(bytes)
+//            } catch (e: IOException) {
+//                Log.e(tag, "Error occurred when sending data", e)
+//
+//                // Send a failure message back to the activity.
+//                val writeErrorMsg = handler.obtainMessage(MESSAGE_ERR)
+//                val bundle = Bundle().apply {
+//                    putString(tag, "Couldn't send data to the other device")
+//                }
+//                writeErrorMsg.data = bundle
+//                handler.sendMessage(writeErrorMsg)
+//                return
+//            }
+//        }
 
         // Closes the client socket and causes the thread to finish.
         fun cancel() {
@@ -156,6 +150,7 @@ public class BluetoothClass {
             }
         }
 
+        // TODO: is there a better way to do this?
         fun getStream(device: BluetoothDevice): BluetoothSocket {
             val socket = device.createRfcommSocketToServiceRecord(uuid)
             val clazz = socket.remoteDevice.javaClass
@@ -164,11 +159,4 @@ public class BluetoothClass {
             return m.invoke(socket.remoteDevice, Integer.valueOf(1)) as BluetoothSocket
         }
     }
-
-//    private inner class BtHandler(private val outerClass: WeakReference<BluetoothClass>) : Handler() {
-//        override fun handleMessage(msg: Message) {
-//            super.handleMessage(msg)
-//            // TODO: Handle messages
-//        }
-//    }
 }
