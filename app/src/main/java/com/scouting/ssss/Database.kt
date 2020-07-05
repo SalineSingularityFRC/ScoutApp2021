@@ -1,13 +1,12 @@
 package com.scouting.ssss
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import bluetooth.Bluetooth
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.lang.Exception
@@ -19,6 +18,7 @@ public class Database {
     private var tempTeamData: JSONArray = JSONArray()
     private var robotMatchData: JSONArray = JSONArray()
     private var tempRobotMatchData: JSONObject = JSONObject()
+    @SuppressLint("SdCardPath")
     private val filePath = "/data/data/com.scouting.ssss/files/teamData.json"
 
     fun setup(bluetooth: BluetoothClass) {
@@ -56,7 +56,6 @@ public class Database {
                     }
                 }
             }
-            //e.printStackTrace()
         } catch (e: JSONException) {
             Log.e(tag, "Caught a JSON exception")
             e.printStackTrace()
@@ -64,6 +63,7 @@ public class Database {
     }
 
     // Scrap a file
+    // Mostly for testing
     fun scrap(name: String) {
         val file = File(name)
         file.delete()
@@ -86,7 +86,7 @@ public class Database {
     }
 
     private fun send() {
-        val data = "{\"matchData\":${robotMatchData.toString()},\"teamData\":${tempTeamData.toString()}}"
+        val data = "{\"matchData\":${robotMatchData},\"teamData\":${tempTeamData}}"
         bluetooth.send(data)
         Log.i(tag, "Sent data: $data")
     }
@@ -94,7 +94,7 @@ public class Database {
     fun dataSent(data: String) {
         try {
             teamData = JSONArray(data)
-            val fos = bluetooth.activity?.openFileOutput("teamData.json", Context.MODE_PRIVATE)?.bufferedWriter().use {
+            bluetooth.activity?.openFileOutput("teamData.json", Context.MODE_PRIVATE)?.bufferedWriter().use {
                 it?.write(teamData.toString())
             }
         } catch (e: IOException) {

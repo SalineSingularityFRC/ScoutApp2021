@@ -1,11 +1,13 @@
 package com.scouting.ssss
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.nio.charset.Charset
 
+const val VERSION = "0.1.0"
 
 // The beginning screen
 class MainActivity : AppCompatActivity() {
@@ -15,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private var started = false
     var database: Database = Database()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,9 +30,12 @@ class MainActivity : AppCompatActivity() {
             Log.i(tag, "Clicked new match button")
         }
 
+        // Display the version number
+        val version = findViewById<TextView>(R.id.version)
+        version.text = "Version $VERSION"
+
         Log.i(tag, "Setting up database")
         database.setup(bluetooth)
-        //database.dataSent(bluetooth.pendingData)
     }
 
     override fun onStart() {
