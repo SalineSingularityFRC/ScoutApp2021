@@ -12,7 +12,7 @@ import java.io.IOException
 import java.lang.Exception
 
 public class Database {
-    private var bluetooth: BluetoothClass = BluetoothClass(null)
+    private lateinit var bluetooth: BluetoothClass
     private val tag = "7G7 Bluetooth"
     private var teamData: JSONArray = JSONArray()
     private var tempTeamData: JSONArray = JSONArray()
