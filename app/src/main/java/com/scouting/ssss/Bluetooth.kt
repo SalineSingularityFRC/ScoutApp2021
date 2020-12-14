@@ -10,7 +10,6 @@ import android.util.Log
 import bluetooth.Bluetooth
 import bluetooth.CommunicationCallback
 
-
 // If we ever want to get fancy, we can use error codes like this to handle errors with the handler
 const val MESSAGE_ERR = 1
 
