@@ -22,6 +22,8 @@ HASH=`git rev-parse --short HEAD`
 # concatenate the version and the hash, something like "1.0.0-a5ad81d"
 FULL="${VERSION}-${HASH}"
 
+echo "Building for version ${FULL}"
+
 # get the initial contents of the file from sed
 # capture this instead of echoing directly to the file to avoid a data race
 FIRST=`cat ${FILE} | sed "s/{{VERSION}}/${FULL}/g"`
