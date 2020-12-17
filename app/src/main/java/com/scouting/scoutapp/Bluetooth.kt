@@ -1,4 +1,4 @@
-package com.scouting.ssss
+package com.scouting.scoutapp
 
 //
 // A class wrapper for bluetooth operations

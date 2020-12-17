@@ -1,4 +1,4 @@
-package com.scouting.ssss
+package com.scouting.scoutapp
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,7 +19,7 @@ public class Database {
     private var robotMatchData: JSONArray = JSONArray()
     private var tempRobotMatchData: JSONObject = JSONObject()
     @SuppressLint("SdCardPath")
-    private val filePath = "/data/data/com.scouting.ssss/files/teamData.json"
+    private val filePath = "/data/data/com.scouting.scoutapp/files/teamData.json"
 
     fun setup(bluetooth: BluetoothClass) {
         // init params

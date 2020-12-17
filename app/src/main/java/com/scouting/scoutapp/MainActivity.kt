@@ -1,6 +1,7 @@
-package com.scouting.ssss
+package com.scouting.scoutapp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 //
 // this works by using sed to "s/{{VERSION}}/${VERSION}/g"
 // where $VERSION is the content of version.txt and the current short git hash (`git rev-parse --short HEAD`)
+// formatted as $VERSION-$HASH
 //
 // effectively this means any instance of the text {{VERSION}} in this file will be replaced with the version
 // this allows me to increment/set the version easily with, say, every git commit so we know what's running on each tablet
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity() {
         // Set behavior for the button
         newMatch.setOnClickListener {
             Log.i(tag, "Clicked new match button")
+            val teams = Intent(applicationContext, Teams::class.java)
+            startActivity(teams)
         }
 
         // Display the version number
