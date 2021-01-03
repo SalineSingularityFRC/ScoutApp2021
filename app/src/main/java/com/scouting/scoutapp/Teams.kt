@@ -27,11 +27,11 @@ class Teams : AppCompatActivity() {
 
         // list of items
         // TODO : get from pi
-        val list = listOf<String>("a", "b", "c", "d", "e", "f", "g")
+        var list = listOf<HashMap<String, String>>()
 
         // create an adapter attached to a layout, NOT a fragment or activity
         // must use the constructor that takes in a TextView (list_text in this instance)
-        val arrayAdapter = ArrayAdapter<String>(this, R.layout.listlayout, R.id.list_text, list)
+        val arrayAdapter = ArrayAdapter<HashMap<String, String>>(this, R.layout.listlayout, R.id.list_text, list)
 
         view.adapter = arrayAdapter
     }

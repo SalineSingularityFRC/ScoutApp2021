@@ -10,7 +10,7 @@ esac
 [ -z "$ACTION" ] && ACTION="./gradlew"
 
 # the file we're searching
-FILE="app/src/main/java/com/scouting/ssss/MainActivity.kt"
+FILE="app/src/main/java/com/scouting/scoutapp/Util.kt"
 
 # get the version from version.txt
 # if it fails, exit
@@ -34,6 +34,6 @@ echo "${FIRST}" > "${FILE}"
 ${ACTION}
 
 # re-insert the text {{VERSION}} for next time, again capturing rather than echoing
-SECOND=`cat app/src/main/java/com/scouting/ssss/MainActivity.kt | sed "s/${FULL}/{{VERSION}}/g"`
+SECOND=`cat ${FILE} | sed "s/${FULL}/{{VERSION}}/g"`
 # write the un-updated file
 echo "${SECOND}" > "${FILE}"
