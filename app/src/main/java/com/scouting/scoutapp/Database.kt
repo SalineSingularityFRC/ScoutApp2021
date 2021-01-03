@@ -20,6 +20,8 @@ class Database {
     @SuppressLint("SdCardPath")
     private val filePath = "/data/data/com.scouting.scoutapp/files/teamData.json"
 
+    // make a companion object to emulate a static field
+    // TODO : sorta a hack I think?
     companion object {
         var teamData: JSONArray = JSONArray()
     }
@@ -138,4 +140,19 @@ class Database {
         tempRobotMatchData = JSONObject()
         this.send()
     }
+}
+
+
+//
+//  util functions
+//
+
+// get the name of the team from the JSON db
+fun getTeamName(i: Int): String {
+    return Database.teamData.getJSONObject(i).getString("name")
+}
+
+// get the team number from the JSON db
+fun getTeamNumber(i: Int): Int {
+    return Database.teamData.getJSONObject(i).getInt("team")
 }

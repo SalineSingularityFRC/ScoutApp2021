@@ -9,18 +9,18 @@ import androidx.appcompat.app.AppCompatActivity
 // this is ONLY usable on a unix (linux, mac, bsd, etc) computer with bourne shell (usually /bin/sh)
 // or on windows with git bash or windows subsystem for linux
 //
-// this works by using sed to "s/1.0.0-e5650e1/${VERSION}/g"
+// this works by using sed to "s/{{VERSION}}/${VERSION}/g"
 // where $VERSION is the content of version.txt and the current short git hash (`git rev-parse --short HEAD`)
 // formatted as $VERSION-$HASH
 //
-// effectively this means any instance of the text 1.0.0-e5650e1 in this file will be replaced with the version
+// effectively this means any instance of the text {{VERSION}} in this file will be replaced with the version
 // this allows me to increment/set the version easily with, say, every git commit so we know what's running on each tablet
 //
 // for more implementation details, the script is pretty well commented and should be ok to understand
 //
 // this was written by skye bleed and is largely magic
 // if she is no longer working on this codebase, feel free to remove or modify it
-const val VERSION = "1.0.0-e5650e1"
+const val VERSION = "{{VERSION}}"
 
 fun <T : AppCompatActivity> alert(obj: T, title: String, message: String, listener: DialogInterface.OnClickListener) {
     // make a popup message to alert the user

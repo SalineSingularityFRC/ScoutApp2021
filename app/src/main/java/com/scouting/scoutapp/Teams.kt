@@ -36,10 +36,15 @@ class Teams : AppCompatActivity() {
         view.adapter = arrayAdapter
 
         // bluetooth code
-        var i = 0
-        while (i < Database.teamData.length()) {
 
-            i += 1
+        // iterate over all teams in the database
+        // for (int i = 0; i < teamData.length(); i++)
+        for (i in 0 until Database.teamData.length()) {
+            val resultsMap = HashMap<String, String>()
+
+            // set name and number
+            resultsMap["name"] = getTeamName(i)
+            resultsMap["number"] = "${getTeamNumber(i)}"
         }
     }
 }
