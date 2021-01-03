@@ -25,7 +25,7 @@ const val VERSION = "{{VERSION}}"
 fun <T : AppCompatActivity> alert(obj: T, title: String, message: String, listener: DialogInterface.OnClickListener) {
     // make a popup message to alert the user
     val builder = AlertDialog.Builder(obj)
-    builder.setMessage("FATAL ERROR: Teams.kt: view (type ListView?) is null. Please contact the scouting team to alert them of the error BEFORE you restart the app.")
+    builder.setMessage(message)
         .setCancelable(false)
         // set the button so we can try to recover later
         .setPositiveButton("OK", listener)
