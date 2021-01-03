@@ -2,6 +2,7 @@ package com.scouting.scoutapp
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONException
@@ -9,22 +10,24 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.lang.Exception
 
-public class Database {
+class Database {
     private lateinit var bluetooth: BluetoothClass
     private val tag = "7G7 Bluetooth"
-    private var teamData: JSONArray = JSONArray()
     private var tempTeamData: JSONArray = JSONArray()
     private var robotMatchData: JSONArray = JSONArray()
     private var tempRobotMatchData: JSONObject = JSONObject()
     @SuppressLint("SdCardPath")
     private val filePath = "/data/data/com.scouting.scoutapp/files/teamData.json"
 
+    companion object {
+        var teamData: JSONArray = JSONArray()
+    }
+
     fun setup(bluetooth: BluetoothClass) {
         // init params
         this.bluetooth = bluetooth
-        this.teamData = JSONArray()
+        teamData = JSONArray()
         this.tempTeamData = JSONArray()
         this.robotMatchData = JSONArray()
         this.tempRobotMatchData = JSONObject()
@@ -44,7 +47,18 @@ public class Database {
                             // NOTE: This may be unsafe. If there's a different JSON err for some reason, everything gets destroyed
                             // The question is whether there can be a JSON err for any reason other than "the file is empty"
                             Log.i(tag, "Writing to file")
-                            it?.write("{[]}".toByteArray())
+                            if (it != null) it.write("{[]}".toByteArray()) else {
+                                Log.e(tag, "it (bluetooth connection of FileOutputStream?) is null")
+                                alert(
+                                    this.bluetooth.activity!!,
+                                    "FATAL CONNECTIVITY ERROR",
+                                    "FATAL BLUETOOTH ERROR: Database.kt: `it` (bluetooth connection of type FileOutputStream?) is null. Please contact the scouting team to alert them of this error BEFORE exiting the app.",
+                                    DialogInterface.OnClickListener {
+                                        // TODO : recover?
+                                        _, _ -> { }
+                                    }
+                                )
+                            }
                         }
 
                         // retry
@@ -78,7 +92,7 @@ public class Database {
 
     fun makeTeam(teamNumber: Int, teamName: String) {
         try {
-            tempTeamData.put( JSONObject("{\"team\":${teamNumber},\"name\":${teamName}}") )
+            tempTeamData.put(JSONObject("{\"team\":${teamNumber},\"name\":${teamName}}"))
             this.send()
         } catch (e: JSONException) {
             e.printStackTrace()

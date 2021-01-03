@@ -34,5 +34,12 @@ class Teams : AppCompatActivity() {
         val arrayAdapter = ArrayAdapter<HashMap<String, String>>(this, R.layout.listlayout, R.id.list_text, list)
 
         view.adapter = arrayAdapter
+
+        // bluetooth code
+        var i = 0
+        while (i < Database.teamData.length()) {
+
+            i += 1
+        }
     }
 }
