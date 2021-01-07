@@ -43,7 +43,7 @@ class Teams : AppCompatActivity() {
 
         // create an adapter attached to a layout, NOT a fragment or activity
         // must use the constructor that takes in a TextView (list_text in this instance)
-        val arrayAdapter = SimpleAdapter(this, list, R.layout.listlayout, arrayOf("name", "number"), intArrayOf(R.id.list_text))
+        val arrayAdapter = SimpleAdapter(this, list, R.layout.listlayout, arrayOf("name", "number"), intArrayOf(R.id.teamName, R.id.teamNumber))
 
         view.adapter = arrayAdapter
 
