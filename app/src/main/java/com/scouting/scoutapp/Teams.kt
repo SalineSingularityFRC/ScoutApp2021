@@ -1,9 +1,10 @@
 package com.scouting.scoutapp
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class Teams : AppCompatActivity() {
@@ -19,6 +20,17 @@ class Teams : AppCompatActivity() {
 
         // get the view with its id in the layout
         this.view = findViewById(R.id.list_item)
+        this.view.setOnItemClickListener { adapterView: AdapterView<*>, view1: View, i: Int, l: Long ->
+            //val teamNumber = this.view.findViewById<TextView>(R.id.)
+            // start MatchInformation page
+            Log.i(tag, "Clicked the team view")
+        }
+
+        val newTeam = findViewById<Button>(R.id.newTeamButton)
+        newTeam.setOnClickListener {
+            // start NewTeam page
+            Log.i(tag, "Clicked 'New Team' button")
+        }
     }
 
     override fun onResume() {
@@ -27,11 +39,11 @@ class Teams : AppCompatActivity() {
 
         // list of items
         // TODO : get from pi
-        var list = listOf<HashMap<String, String>>()
+        val list = mutableListOf<HashMap<String, String>>()
 
         // create an adapter attached to a layout, NOT a fragment or activity
         // must use the constructor that takes in a TextView (list_text in this instance)
-        val arrayAdapter = ArrayAdapter<HashMap<String, String>>(this, R.layout.listlayout, R.id.list_text, list)
+        val arrayAdapter = SimpleAdapter(this, list, R.layout.listlayout, arrayOf("name", "number"), intArrayOf(R.id.list_text))
 
         view.adapter = arrayAdapter
 
@@ -45,6 +57,20 @@ class Teams : AppCompatActivity() {
             // set name and number
             resultsMap["name"] = getTeamName(i)
             resultsMap["number"] = "${getTeamNumber(i)}"
+            list.add(resultsMap)
         }
+
+        // iterate over local teams
+        for (i in 0 until Database.tempTeamData.length()) {
+            val resultsMap = HashMap<String, String>()
+
+            resultsMap["name"] = getLocalTeamName(i)
+            resultsMap["number"] = "${getLocalTeamNumber(i)}"
+            list.add(resultsMap)
+        }
+
+        Log.i(tag, "list: $list")
+
+        arrayAdapter.notifyDataSetChanged()
     }
 }

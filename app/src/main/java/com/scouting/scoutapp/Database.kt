@@ -14,7 +14,6 @@ import java.io.IOException
 class Database {
     private lateinit var bluetooth: BluetoothClass
     private val tag = "7G7 Bluetooth"
-    private var tempTeamData: JSONArray = JSONArray()
     private var robotMatchData: JSONArray = JSONArray()
     private var tempRobotMatchData: JSONObject = JSONObject()
     @SuppressLint("SdCardPath")
@@ -24,13 +23,14 @@ class Database {
     // TODO : sorta a hack I think?
     companion object {
         var teamData: JSONArray = JSONArray()
+        var tempTeamData: JSONArray = JSONArray()
     }
 
     fun setup(bluetooth: BluetoothClass) {
         // init params
         this.bluetooth = bluetooth
         teamData = JSONArray()
-        this.tempTeamData = JSONArray()
+        tempTeamData = JSONArray()
         this.robotMatchData = JSONArray()
         this.tempRobotMatchData = JSONObject()
 
@@ -155,4 +155,14 @@ fun getTeamName(i: Int): String {
 // get the team number from the JSON db
 fun getTeamNumber(i: Int): Int {
     return Database.teamData.getJSONObject(i).getInt("team")
+}
+
+// get local team name
+fun getLocalTeamName(i: Int): String {
+    return Database.tempTeamData.getJSONObject(i).getString("name")
+}
+
+// get local team number
+fun getLocalTeamNumber(i: Int): Int {
+    return Database.tempTeamData.getJSONObject(i).getInt("team")
 }
