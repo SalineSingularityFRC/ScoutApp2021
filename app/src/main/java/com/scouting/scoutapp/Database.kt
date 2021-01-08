@@ -166,3 +166,8 @@ fun getLocalTeamName(i: Int): String {
 fun getLocalTeamNumber(i: Int): Int {
     return Database.tempTeamData.getJSONObject(i).getInt("team")
 }
+
+// make a team
+fun makeTeam(teamNumber: Int, teamName: String) {
+    Database.tempTeamData.put(JSONObject("{\"team\":$teamNumber,\"name\":\"$teamName\"}"))
+}

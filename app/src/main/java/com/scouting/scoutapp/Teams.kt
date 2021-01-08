@@ -1,5 +1,6 @@
 package com.scouting.scoutapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -30,6 +31,9 @@ class Teams : AppCompatActivity() {
         newTeam.setOnClickListener {
             // start NewTeam page
             Log.i(tag, "Clicked 'New Team' button")
+
+            val newTeam = Intent(applicationContext, NewTeam::class.java)
+            startActivity(newTeam)
         }
     }
 
@@ -38,12 +42,16 @@ class Teams : AppCompatActivity() {
         super.onResume()
 
         // list of items
-        // TODO : get from pi
         val list = mutableListOf<HashMap<String, String>>()
 
         // create an adapter attached to a layout, NOT a fragment or activity
+        // the adapter takes a list of hashmaps and presents them in a friendly way on the app
         // must use the constructor that takes in a TextView (list_text in this instance)
-        val arrayAdapter = SimpleAdapter(this, list, R.layout.listlayout, arrayOf("name", "number"), intArrayOf(R.id.teamName, R.id.teamNumber))
+        val arrayAdapter = SimpleAdapter(this,
+            list,
+            R.layout.listlayout,
+            arrayOf("name", "number"), // the keys to use from the map
+            intArrayOf(R.id.teamName, R.id.teamNumber)) // the ids on the listlayout to map to the values
 
         view.adapter = arrayAdapter
 
